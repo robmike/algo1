@@ -48,17 +48,50 @@ def sortandcount(array):
         (ra, rc) = sortandcount(array[n//2:])
         (srta, s) = mergeandcount(la, ra)
         return (array, n + l + s)
-    
+
+def merge(la, ra):
+    n = len(la)+len(ra)
+    out = np.empty((n,), dtype='int32')
+    i, j = 0, 0
+    count = 0
+    for k in xrange(n):
+        if la[i] < ra[j]:
+            out[k] = la[i]
+            i += 1
+            if i >= len(la):
+                out[k+1:] = ra[j:]
+                break
+        else:
+            out[k] = ra[j]
+            j += 1
+            count += len(la) - i
+            if j >= len(ra):
+                out[k+1:] = la[i:]
+                break
+    return (count, out)
+
+def countinv(array):
+    n = len(array)
+    count = 0
+    m = 1
+    while m < n:
+        i = 0
+        while i < n-m:
+            endpt = min(i+2*m,n)
+            c, aslice = merge(array[i:i+m], array[i+m:endpt])
+            array[i:endpt] = aslice
+            count += c
+            i = i + 2*m
+        m = 2*m
+    return count
 
 def readdata(infile='IntegerArray.txt'):
     size = 100000
     array = np.empty((size,), dtype='int32')
     with open(infile, 'r') as f:
         for i,line in enumerate(f):
-            try:
-                array[i] = int(line)
-            except IndexError:
-                print i
+            array[i] = int(line)
     return array
 
-sortandcount(readdata())
+print countinv(readdata())
+# 2407905288
