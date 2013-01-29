@@ -17,38 +17,6 @@ def info(type, value, tb):
 
 sys.excepthook = info
 
-def mergeandcount(la, ra):
-    n = len(la)+len(ra)
-    out = np.empty((n,), dtype='int32')
-    i, j = 0, 0
-    count = 0
-    for k in xrange(n):
-        if la[i] < ra[j]:
-            out[k] = la[i]
-            i += 1
-            if i >= len(la):
-                out[k+1:] = ra[j:]
-                break
-        else:
-            out[k] = ra[j]
-            j += 1
-            count += len(la) - i
-            if j >= len(ra):
-                out[k+1:] = la[i:]
-                count += len(la) - i
-                break
-    return (out, count)
-
-def sortandcount(array):
-    n = len(array)
-    if n == 1:
-        return (array, 0)
-    else:
-        (la, lc) = sortandcount(array[1:n//2])
-        (ra, rc) = sortandcount(array[n//2:])
-        (srta, s) = mergeandcount(la, ra)
-        return (array, n + l + s)
-
 def merge(la, ra):
     n = len(la)+len(ra)
     out = np.empty((n,), dtype='int32')
