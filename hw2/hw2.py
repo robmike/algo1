@@ -1,6 +1,8 @@
 import numpy as np
 
 import pdb, sys
+sys.setrecursionlimit(21000)    # FIXME: Make solution iterative
+
 # debug shit (from stackexchange)
 def info(type, value, tb):
    if hasattr(sys, 'ps1') or not sys.stderr.isatty():
@@ -32,7 +34,7 @@ def partition(a, pivotidx=0):
     a[0], a[i-1] = a[i-1], a[0]
     return i-1
 
-def quicksort(a, fpivotsel = lambda x: 0):
+def quicksorthelper(a, fpivotsel):
     n = len(a)
     if n < 2:
         return 0
@@ -43,6 +45,9 @@ def quicksort(a, fpivotsel = lambda x: 0):
     count += quicksort(a[i+1:], fpivotsel)
     return count
 
+def quicksort(a, fpivotsel = lambda x: 0):
+    return quicksorthelper(a, fpivotsel)
+
 def readdata(infile='QuickSort.txt'):
     size = 10000
     a = np.empty((size,), dtype='int32')
@@ -52,19 +57,17 @@ def readdata(infile='QuickSort.txt'):
     return a
 
 def median3(x):
-    y = [x[0], x[(len(x)-1)//2], x[-1]]
-    if y[0] > y[1]:
-        y[0], y[1] = y[1], y[0]
-    if y[1] > y[2]:
-        y[2], y[1] = y[1], y[2]
-    if y[0] > y[1]:
-        y[0], y[1] = y[1], y[0]
-    return y[1]
+   y = [x[0], x[(len(x)-1)//2], x[-1]]
+   if y[0] >= min(y[1],y[2]) and y[0] <= max(y[1], y[2]):
+      return 0
+   if y[2] >= min(y[0],y[1]) and y[2] <= max(y[0], y[1]):
+      return len(x) - 1
+   return (len(x) -1)//2
 
-def checkquicksort(f=lambda x: 0):
-    
-
-def main():
-    print quicksort(readdata())
-    print quicksort(readdata(), lambda x: len(x) - 1)
-    print quicksort(readdata(), median3)
+a = readdata()
+x = np.copy(a)
+print quicksort(x) # 49995000
+x = np.copy(a)
+print quicksort(x, lambda x: len(x) - 1) # 164123
+x = np.copy(a)
+print quicksort(x, median3)
