@@ -89,27 +89,33 @@ def randmincut(x):
         x[i] = sorted(x[i] + x[v-1]) # fixme: lists are already sorted, just merge
         x[v-1] = []
 
-        nvert = sum([1 for z in x if len(z) != 0])
+        nvert -= 1
         nedges = nelems2d(x)
+
+        for y in x:
+           for k, e in enumerate(y):
+              if e == v:
+                 y[k] = i
 
     return nedges
 
 def main():
    a = readdata()
-   ntrials = 1000
+   ntrials = 500
    cutsize = len(a)*len(a)         # bignum
 
    random.seed(31415)
-   widgets = [pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA()]
-   pbar = pb.ProgressBar(widgets=widgets, maxval=ntrials).start()
+   #widgets = [pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA()]
+   #pbar = pb.ProgressBar(widgets=widgets, maxval=ntrials).start()
 
    for i in xrange(0, ntrials):
       x = copy.deepcopy(a)
       newcut = randmincut(x)
       cutsize = min(cutsize, newcut)
-      pbar.update(i)
+      print cutsize, newcut
+      # pbar.update(i)
       
-   pbar.finish()
+   #pbar.finish()
    print cutsize
 
 main()
