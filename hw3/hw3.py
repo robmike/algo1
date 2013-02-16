@@ -25,7 +25,7 @@ def readdata(infile='kargerMinCut.txt'):
     a = []
     with open(infile, 'r') as f:
         for i,line in enumerate(f):
-            a.append(sorted([int(x) for x in line.split()])) # FIXME: don't need to traverse list twice 
+            a.append(sorted([int(x) for x in line.split()[1:]])) # FIXME: don't need to traverse list twice 
     return a
 
 # def elemremove(b, j, v):
