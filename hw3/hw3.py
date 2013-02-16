@@ -98,9 +98,8 @@ def randmincut(x):
 
     return nedges
 
-def main(fname):
+def main(fname, ntrials):
    a = readdata(fname)
-   ntrials = 1500
    cutsize = len(a)*len(a)         # bignum
 
    random.seed(31415)
@@ -115,7 +114,7 @@ def main(fname):
       pbar.update(i)
       
    pbar.finish()
-   print cutsize
+   print cutsize/2.0
 
 if __name__ == '__main__':
-   main(sys.argv[1])
+   main(sys.argv[1], 500)
