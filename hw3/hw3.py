@@ -64,7 +64,7 @@ def randsel2d(x):
          return i,j
       else:
          cumsum += len(c)
-   pdb.set_trace()
+   pdb.set_trace()              # should never happen
    return None
 
 def randmincut(x):
@@ -79,8 +79,8 @@ def randmincut(x):
         nedges -= count
 
         try:
-            idx = x[v-1].index(i)
-            x[v-1], count = elemremove(x[v-1], idx, i)
+            idx = x[v-1].index(i+1)
+            x[v-1], count = elemremove(x[v-1], idx, i+1)
             nedges -= count
         except ValueError:
             pass
@@ -89,32 +89,32 @@ def randmincut(x):
         x[v-1] = []
 
         nvert -= 1
-        nedges = nelems2d(x)
+        nedges = nelems2d(x)    # FIXME: we can just calculate this
 
-        for y in x:
+        for l, y in enumerate(x):
            for k, e in enumerate(y):
               if e == v:
-                 y[k] = i
+                 x[l][k] = i+1
 
     return nedges
 
 def main(fname):
    a = readdata(fname)
-   ntrials = 500
+   ntrials = 1500
    cutsize = len(a)*len(a)         # bignum
 
    random.seed(31415)
-   #widgets = [pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA()]
-   #pbar = pb.ProgressBar(widgets=widgets, maxval=ntrials).start()
+   widgets = [pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA()]
+   pbar = pb.ProgressBar(widgets=widgets, maxval=ntrials).start()
 
    for i in xrange(0, ntrials):
       x = copy.deepcopy(a)
       newcut = randmincut(x)
       cutsize = min(cutsize, newcut)
-      print cutsize, newcut
-      # pbar.update(i)
+      # print cutsize, newcut
+      pbar.update(i)
       
-   #pbar.finish()
+   pbar.finish()
    print cutsize
 
 if __name__ == '__main__':
