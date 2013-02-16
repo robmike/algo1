@@ -52,7 +52,7 @@ def nelems2d(x):
    return sum([len(z) for z in x])
 
 def randsel2d(x):
-   n = nelems2d(x)
+   n = nelems2d(x)              # fixme: just pass this to the function
       
    k = random.randint(1, n)
    cumsum = 0
@@ -68,7 +68,7 @@ def randsel2d(x):
    return None
 
 def randmincut(x):
-    nedges = nelems2d(x)
+    nedges = nelems2d(x)        # fixme: just pass this to the function
     nvert = len(x)
     while nvert > 2:
        
@@ -89,7 +89,7 @@ def randmincut(x):
         x[v-1] = []
 
         nvert -= 1
-        nedges = nelems2d(x)    # FIXME: we can just calculate this
+        # nedges = nelems2d(x)    # FIXME: we can just calculate this
 
         for l, y in enumerate(x):
            for k, e in enumerate(y):
