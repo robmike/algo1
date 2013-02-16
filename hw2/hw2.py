@@ -1,7 +1,7 @@
 import numpy as np
 
 import pdb, sys
-sys.setrecursionlimit(21000)    # FIXME: Make solution iterative
+sys.setrecursionlimit(21000)    # FIXME: Make solution iterative (just use a stack)
 
 # debug shit (from stackexchange)
 def info(type, value, tb):
