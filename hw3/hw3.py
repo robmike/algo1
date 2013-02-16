@@ -68,7 +68,6 @@ def randsel2d(x):
    return None
 
 def randmincut(x):
-    active = range(1,201)
     nedges = nelems2d(x)
     nvert = len(x)
     while nvert > 2:
