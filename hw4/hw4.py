@@ -47,33 +47,29 @@ def readdata(infile):
         nodes.append(-heapq.heappop(h))
     return nodes, fwd, rev
 
-def dfs(n, rev, tfinish, started, finished, finheap, leader):
-   import pdb
-   pdb.set_trace()
-
+def dfs(n, rev, tfinish, started, finheap, leader):
    stack = [n]
    while(stack):
       u = stack.pop()
+      if u < 0:                 # sentinel, node is finished
+         heapq.heappush(finheap, (-tfinish, -u)) # maxheap
+         tfinish += 1
+         continue
+
       try: # If node has been started
          started[u]
-         try:
-            finished[u]
-         except KeyError:
-            # If not has been started but not finished then finish
-            finished[u] = True
-            heapq.heappush(finheap, (-tfinish, u)) # maxheap
-            tfinish += 1
       except KeyError:
          # Node not been started, mark as started, add successors to stack
          started[u] = True
          leader[u] = n
+         stack.append(-u)           # sentinel to mark when finished
          for v in reversed(rev[u]): # Reversed to keep node order with lectures
             stack.append(v)
-
+   return tfinish
+         
 def kos(nodes, rev):
     tfinish = 0
     seen = {}
-    finish = {}
     leader = {}
     finheap = []
     
@@ -82,20 +78,24 @@ def kos(nodes, rev):
           seen[n]
           continue
        except KeyError:
-          dfs(n, rev, tfinish + 1, seen, finish, finheap, leader)
-    return finish, leader, finheap
+          tfinish = dfs(n, rev, tfinish + 1, seen, finheap, leader)
+    return leader, finheap
 
 def kosaraju(nodes, fwd, rev):
+   leader, finheap = kos(nodes, rev)
 
-   finish, leader, finheap = kos(nodes, rev)
+   sorted_nodes = []
+   while(finheap):
+      sorted_nodes.append(heapq.heappop(finheap)[1])
 
-   sorted_nodes = [x[1] for x in heapq.heappop(finheap)]
-
-   finish, leader = kos(nodes, fwd)
+   import pdb
+   pdb.set_trace()
+   leader, finheap = kos(sorted_nodes, fwd)
+   return leader
 
 
 def main():
-   kosaraju(*readdata('test.txt'))
+   leader = kosaraju(*readdata('test.txt'))
 
 x = {'a': 1}
 def foo(y):
