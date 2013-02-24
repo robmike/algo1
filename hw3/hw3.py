@@ -3,6 +3,8 @@ import random
 import copy
 import progressbar as pb
 
+import cProfile
+
 import pdb, sys
 
 # debug shit (from stackexchange)
