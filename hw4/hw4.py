@@ -3,7 +3,8 @@ import random
 import copy
 import heapq
 import progressbar as pb
-from collections import defaultdict
+from collections import defaultdict, Counter
+from pprint import pprint
 
 import cProfile
 
@@ -25,6 +26,30 @@ def info(type, value, tb):
 
 sys.excepthook = info
 
+class DisjointSet(object):
+    def __init__(self):
+        self.partitions = {}
+    def count(self):
+        return len(self.partitions.keys())
+    def makeset(self, x):
+        self.partitions[x] = [x]
+    def find(self, x):
+        for rep, elems in self.partitions.iteritems():
+            if x in elems:
+                return rep
+        return None
+    def sameset(self, x, y):
+        return self.find(x) == self.find(y)
+    def merge(self, p, q):
+        p = self.find(p)
+        q = self.find(q)
+        rep = p
+        if len(self.partitions[p]) < len(self.partitions[q]):
+            rep = q
+        a, b = self.partitions[p], self.partitions[q]
+        del(self.partitions[p])
+        del(self.partitions[q])
+        self.partitions[rep] = a + b
 
 def readdata(infile): 
     fwd = defaultdict(lambda: [])
@@ -47,7 +72,7 @@ def readdata(infile):
         nodes.append(-heapq.heappop(h))
     return nodes, fwd, rev
 
-def dfs(n, rev, tfinish, started, finheap, leader):
+def dfs(n, rev, tfinish, started, finheap, leader): # FIXME: leader should be a UnionFind
    stack = [n]
    while(stack):
       u = stack.pop()
@@ -88,15 +113,19 @@ def kosaraju(nodes, fwd, rev):
    while(finheap):
       sorted_nodes.append(heapq.heappop(finheap)[1])
 
-   import pdb
-   pdb.set_trace()
    leader, finheap = kos(sorted_nodes, fwd)
    return leader
 
 
-def main():
-   leader = kosaraju(*readdata('test.txt'))
+def main(infile):
+   leader = kosaraju(*readdata(infile))
+   cnt = Counter(leader.values())
+   pprint(cnt.most_common(5))
 
-x = {'a': 1}
-def foo(y):
-   y['b'] = 3
+if __name__ == '__main__':
+   import sys
+   infile = 'test.txt'
+   if len(sys.argv) > 1:
+      infile = sys.argv[1]
+   main(infile)
+
