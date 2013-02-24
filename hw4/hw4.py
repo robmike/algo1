@@ -10,6 +10,9 @@ import cProfile
 
 import pdb, sys
 
+itercounter = 0
+pbar = None
+
 # debug shit (from stackexchange)
 def info(type, value, tb):
    if hasattr(sys, 'ps1') or not sys.stderr.isatty():
@@ -93,17 +96,20 @@ def dfs(n, rev, tfinish, started, finheap, leader): # FIXME: leader should be a 
    return tfinish
          
 def kos(nodes, rev):
+    global itercounter
+    global pbar
     tfinish = 0
     seen = {}
     leader = {}
     finheap = []
-    
+
     for n in nodes:
        try:
           seen[n]
           continue
        except KeyError:
           tfinish = dfs(n, rev, tfinish + 1, seen, finheap, leader)
+       pbar.update(itercounter)
     return leader, finheap
 
 def kosaraju(nodes, fwd, rev):
@@ -118,7 +124,18 @@ def kosaraju(nodes, fwd, rev):
 
 
 def main(infile):
-   leader = kosaraju(*readdata(infile))
+   global itercounter
+   global pbar
+   itercounter = 0
+
+   widgets = [pb.Percentage(), ' ', pb.Bar(), ' ', pb.ETA()]
+
+   nodes, fwd, rev = readdata(infile)
+   pbar = pb.ProgressBar(widgets=widgets, maxval=2*len(nodes)).start()
+   
+   leader = kosaraju(nodes, fwd, rev)
+   pbar.finish()
+   
    cnt = Counter(leader.values())
    pprint(cnt.most_common(5))
 
